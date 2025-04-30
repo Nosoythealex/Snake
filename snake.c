@@ -22,9 +22,9 @@
 
 // Almacenamos la direcciones de Switches, D_Pads y Led's
 volatile unsigned int *switch0 = (volatile unsigned int *)SWITCHES_0_BASE; 
-// almacenamos la direccion del inicio de la matriz
+// LEDS
 volatile unsigned int *led_base = (volatile unsigned int *)LED_MATRIX_0_BASE; // Cast a entero
-// almacenamos los D_Pads
+// D_Pads
 volatile unsigned int *d_padUp = (volatile unsigned int *)D_PAD_0_UP;
 volatile unsigned int *d_padDo = (volatile unsigned int *)D_PAD_0_DOWN;
 volatile unsigned int *d_padLe = (volatile unsigned int *)D_PAD_0_LEFT;
