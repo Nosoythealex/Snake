@@ -1,7 +1,6 @@
 
 <center><h2> Practica 02: Snake </h2></center>
 
-***
 
 **Integrantes**:
 
@@ -17,8 +16,3 @@
 - SEBASTIAN DEL RIO GARCIA RIOS
 
 ****
-
->[!note] Nota
->
->Aqui subiremos los avances de la practica 02.
-
