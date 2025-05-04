@@ -30,3 +30,6 @@ volatile unsigned int *d_padDo = (volatile unsigned int *)D_PAD_0_DOWN;
 volatile unsigned int *d_padLe = (volatile unsigned int *)D_PAD_0_LEFT;
 volatile unsigned int *d_padRi = (volatile unsigned int *)D_PAD_0_RIGHT;
 
+// Array para Posicion para el cuerpo y coordenadas
+int snake_bx[100];
+int snake_by[100];
