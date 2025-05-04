@@ -20,6 +20,10 @@
 #define led_matrix_wid 35 // Ancho exacto establecido en Ripes
 #define led_matrix_hei 25 // Alto exacto establecido en Ripes
 
+#define COLOR_SNAKE_HEAD 0x00FF00 // Color para la cabeza
+#define COLOR_SNAKE_BODY 0x00C000 // Color para el cuerpo
+#define COLOR_APPLE 0xFF0000 // Color a la manzana.
+
 // Almacenamos la direcciones de Switches, D_Pads y Led's
 volatile unsigned int *switch0 = (volatile unsigned int *)SWITCHES_0_BASE; 
 // LEDS
@@ -30,6 +34,38 @@ volatile unsigned int *d_padDo = (volatile unsigned int *)D_PAD_0_DOWN;
 volatile unsigned int *d_padLe = (volatile unsigned int *)D_PAD_0_LEFT;
 volatile unsigned int *d_padRi = (volatile unsigned int *)D_PAD_0_RIGHT;
 
+// Registro para elestado de los LED's
+unsigned int led_state[25][35];
+
+
 // Array para Posicion para el cuerpo y coordenadas
 int snake_bx[100];
 int snake_by[100];
+int snake_length =1;
+
+// Posicion de la manzana
+int apple_x = 0;
+int apple_y = 0;
+
+// Puntero para cabeza de la serpiente y la manzana
+volatile unsigned int *snakeHead = 0;
+volatile unsigned int *apple =0;
+
+
+
+void main()
+{
+    printf("   ▄████████ ███▄▄▄▄      ▄████████    ▄█   ▄█▄    ▄████████ \n");
+    printf("  ███    ███ ███▀▀▀██▄   ███    ███   ███ ▄███▀   ███    ███ \n");
+    printf("  ███    █▀  ███   ███   ███    ███   ███▐██▀     ███    █▀  \n");
+    printf("  ███        ███   ███   ███    ███  ▄█████▀     ▄███▄▄▄     \n");
+    printf("▀███████████ ███   ███ ▀███████████ ▀▀█████▄    ▀▀███▀▀▀     \n");
+    printf("         ███ ███   ███   ███    ███   ███▐██▄     ███    █▄  \n");
+    printf("   ▄█    ███ ███   ███   ███    ███   ███ ▀███▄   ███    ███ \n");
+    printf(" ▄████████▀   ▀█   █▀    ███    █▀    ███   ▀█▀   ██████████ \n");
+    printf("                                      ▀                      \n");
+    printf("\n Instrucciones: \n")
+    printf("1.Presiona Switch 0 para iniciar.")
+    printf("2.SNAKE es de color verde, APPLE de color rojo.")
+    printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
+}
