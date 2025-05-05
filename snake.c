@@ -102,4 +102,15 @@ void main()
     printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
 
     
+    // Inicializar la matriz para que todos los LED's esten apagados
+    for (int y = 0; y < led_matrix_height; y++) {
+        for (int x = 0; x < led_matrix_width; x++) {
+            current_led_state[y][x] = 0x000000;
+        }
+    }
+
+    clearMatrix();
+
+
+    
 }
