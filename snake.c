@@ -27,16 +27,15 @@
 // Almacenamos la direcciones de Switches, D_Pads y Led's
 volatile unsigned int *switch0 = (volatile unsigned int *)SWITCHES_0_BASE; 
 // LEDS
-volatile unsigned int *led_base = (volatile unsigned int *)LED_MATRIX_0_BASE; // Cast a entero
+volatile unsigned int *baseLed = (volatile unsigned int *)LED_MATRIX_0_BASE; // Cast a entero
 // D_Pads
 volatile unsigned int *d_padUp = (volatile unsigned int *)D_PAD_0_UP;
 volatile unsigned int *d_padDo = (volatile unsigned int *)D_PAD_0_DOWN;
 volatile unsigned int *d_padLe = (volatile unsigned int *)D_PAD_0_LEFT;
 volatile unsigned int *d_padRi = (volatile unsigned int *)D_PAD_0_RIGHT;
 
-// Registro para elestado de los LED's
+// Registro para el estado de los LED's
 unsigned int led_state[25][35];
-
 
 // Array para Posicion para el cuerpo y coordenadas
 int snake_bx[100];
@@ -53,18 +52,21 @@ volatile unsigned int *apple =0;
 
 
 // Variables globales
-unsigned int next_random = 1;
+unsigned int numRandom = 1;
 int in_game = 0;
 int direction = 1; // 1=arriba, 2=abajo, 3=izquierda, 4=derecha
 int score = 1;
 int head_x = 0;    
 int head_y = 0;
 int debug_mode = 1;
-int game_speed = 600; // Velocidad aumentada (valor más bajo = más rápido)
+int speed = 600; // Velocidad aumentada (valor más bajo = más rápido)
 
 
 // Funciones de Snake:
 void clearMatrix();
+int rand();
+void snake();
+
 
 // Limpiar toda la matriz LED
 void clearMatrix()
@@ -74,16 +76,45 @@ void clearMatrix()
     
     for (int y = 0; y < led_matrix_height; y++) {
         for (int x = 0; x < led_matrix_width; x++) {
-            led_ptr = led_base + (led_matrix_width * y) + x;
+            led_ptr = baseLed + (led_matrix_width * y) + x;
             *led_ptr = 0x000000; // Apagar LED
             
             // Actualizar también nuestro registro de estado
-            current_led_state[y][x] = 0x000000;
+            led_state[y][x] = 0x000000;
         }
     }
     
     printf("Matriz LED limpiada\n");
 }
+
+void snake()
+{
+    printf("Creando la serpiente...");
+
+    //La ponemos en la posicion inicial
+    head_x = BOARD_WIDTH / 2;
+    head_y = BOARD_HEIGHT - 2;
+
+    //Almacenamos los valores en nuestro array
+    snake_bx[0] = head_x;
+    snake_by[0] = head_y;
+
+    //Solo para ver donde esta el error:
+    printf("Serpiente creada en (%d, %d)\n", head_x, head_y);
+
+}
+
+//Funcion en base XORShift para numeros aleatorios
+int random() 
+{
+    numRandom ^= numRandom << 13; // recorremos 13 bits a la izquierda
+    numRandom ^= numRandom >> 17; // ahora 17 a la derecha
+    numRandom ^= numRandom << 5; // ultimo, 5 a la izquiera
+
+    return numRandom % 32768;
+}
+
+
 
 void main()
 {
@@ -102,7 +133,7 @@ void main()
     printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
 
     
-    // Inicializar la matriz para que todos los LED's esten apagados
+    // Inicializar la matriz para que todos los LED's esten apagados
     for (int y = 0; y < led_matrix_height; y++) {
         for (int x = 0; x < led_matrix_width; x++) {
             current_led_state[y][x] = 0x000000;
