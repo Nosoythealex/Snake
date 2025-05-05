@@ -107,9 +107,9 @@ void clearMatrix()
     volatile unsigned int *led_ptr;
     printf("Limpiando matriz LED...\n");
     
-    for (int y = 0; y < led_matrix_height; y++) {
-        for (int x = 0; x < led_matrix_width; x++) {
-            led_ptr = baseLed + (led_matrix_width * y) + x;
+    for (int y = 0; y < matrix_hei; y++) {
+        for (int x = 0; x < matrix_wid; x++) {
+            led_ptr = baseLed + (matrix_wid * y) + x;
             *led_ptr = 0x000000; // Apagar LED
             
             // Actualizar también nuestro registro de estado
@@ -125,8 +125,8 @@ void snake()
     printf("Creando la serpiente...");
 
     //La ponemos en la posicion inicial
-    head_x = BOARD_WIDTH / 2;
-    head_y = BOARD_HEIGHT - 2;
+    head_x = WIDTH / 2;
+    head_y = HEIGHT - 2;
 
     //Almacenamos los valores en nuestro array
     snake_bx[0] = head_x;
