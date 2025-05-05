@@ -12,6 +12,7 @@
 
 #include "ripes_system.h"
 #include <stdio.h>
+#include <stdlib.h> //rand()
 
 // Definimos las medidas exactas de nuestro pantalla
 #define WIDTH 34 // BOARD_WIDTH - 1 para el indice base 0
