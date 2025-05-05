@@ -52,6 +52,15 @@ volatile unsigned int *snakeHead = 0;
 volatile unsigned int *apple =0;
 
 
+// Variables globales
+unsigned int next_random = 1;
+int in_game = 0;
+int direction = 1; // 1=arriba, 2=abajo, 3=izquierda, 4=derecha
+int score = 1;
+int head_x = 0;    
+int head_y = 0;
+int debug_mode = 1;
+int game_speed = 600; // Velocidad aumentada (valor más bajo = más rápido)
 
 void main()
 {
