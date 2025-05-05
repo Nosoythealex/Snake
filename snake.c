@@ -62,6 +62,28 @@ int head_y = 0;
 int debug_mode = 1;
 int game_speed = 600; // Velocidad aumentada (valor más bajo = más rápido)
 
+
+// Declarando funciones:
+void clearLed();
+
+// Limpiar toda la matriz LED
+void clearMatrix()
+{
+    volatile unsigned int *led_ptr;
+    printf("Limpiando matriz LED...\n");
+    
+    for (int y = 0; y < led_matrix_height; y++) {
+        for (int x = 0; x < led_matrix_width; x++) {
+            led_ptr = led_base + (led_matrix_width * y) + x;
+            *led_ptr = 0x000000; // Apagar LED
+            
+            // Actualizar también nuestro registro de estado
+            current_led_state[y][x] = 0x000000;
+        }
+    }
+    
+    printf("Matriz LED limpiada\n");
+}
 void main()
 {
     printf("   ▄████████ ███▄▄▄▄      ▄████████    ▄█   ▄█▄    ▄████████ \n");
