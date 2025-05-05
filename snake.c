@@ -63,8 +63,8 @@ int debug_mode = 1;
 int game_speed = 600; // Velocidad aumentada (valor más bajo = más rápido)
 
 
-// Declarando funciones:
-void clearLed();
+// Funciones de Snake:
+void clearMatrix();
 
 // Limpiar toda la matriz LED
 void clearMatrix()
@@ -84,6 +84,7 @@ void clearMatrix()
     
     printf("Matriz LED limpiada\n");
 }
+
 void main()
 {
     printf("   ▄████████ ███▄▄▄▄      ▄████████    ▄█   ▄█▄    ▄████████ \n");
@@ -99,4 +100,6 @@ void main()
     printf("1.Presiona Switch 0 para iniciar.")
     printf("2.SNAKE es de color verde, APPLE de color rojo.")
     printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
+
+    
 }
