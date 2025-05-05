@@ -54,20 +54,54 @@ volatile unsigned int *apple =0;
 // Variables globales
 unsigned int numRandom = 1;
 int in_game = 0;
-int direction = 1; // 1=arriba, 2=abajo, 3=izquierda, 4=derecha
+int direction = 1; // 1=UP, 2=DOWN(malito), 3=LEFT 4=RIGHT
 int score = 1;
 int head_x = 0;    
 int head_y = 0;
 int debug_mode = 1;
-int speed = 600; // Velocidad aumentada (valor más bajo = más rápido)
+int speed = 600; // Velocidad: (valor más bajo = más rápido)
 
 
 // Funciones de Snake:
 void clearMatrix();
-int rand();
 void snake();
+void appleGen();
+void dpads(int up, int down, int left, int right);
+void abso(int value);
+
+void main()
+{
+    printf(" $$$$$$\\  $$\\   $$\\  $$$$$$\\  $$\\   $$\\ $$$$$$$$\\ \n");
+    printf("$$  __$$\\ $$$\\  $$ |$$  __$$\\ $$ | $$  |$$  _____|\n");
+    printf("$$ /  \\__|$$$$\\ $$ |$$ /  $$ |$$ |$$  / $$ |      \n");
+    printf("\\$$$$$$\\  $$ $$\\$$ |$$$$$$$$ |$$$$$  /  $$$$$\\    \n");
+    printf(" \\____$$\\ $$ \\$$$$ |$$  __$$ |$$  $$<   $$  __|   \n");
+    printf("$$\\   $$ |$$ |\\$$$ |$$ |  $$ |$$ |\\$$\\  $$ |      \n");
+    printf("\\$$$$$$  |$$ | \\$$ |$$ |  $$ |$$ | \\$$\\ $$$$$$$$\\ \n");
+    printf(" \\______/ \\__|  \\__|\\__|  \\__|\\__|  \\__|\\________|\n");
+
+    printf("\n Instrucciones: \n");
+    printf("1. Presiona Switch 0 para iniciar.\n");
+    printf("2. SNAKE es de color verde, APPLE de color rojo.\n");
+    printf("3. Para reiniciar el juego, apaga y prende el SWITCH 0.\n");
+    printf("\n Instrucciones: \n")
+    printf("1.Presiona Switch 0 para iniciar.")
+    printf("2.SNAKE es de color verde, APPLE de color rojo.")
+    printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
+
+    
+    // Inicializar la matriz para que todos los LED's esten apagados
+    for (int y = 0; y < led_matrix_height; y++) {
+        for (int x = 0; x < led_matrix_width; x++) {
+            led_state[y][x] = 0x000000;
+        }
+    }
+
+    clearMatrix();
 
 
+    
+}
 // Limpiar toda la matriz LED
 void clearMatrix()
 {
@@ -104,6 +138,7 @@ void snake()
 
 }
 
+/*
 //Funcion en base XORShift para numeros aleatorios
 int random() 
 {
@@ -113,35 +148,100 @@ int random()
 
     return numRandom % 32768;
 }
+*/
 
+// Para sacar el valor absoluto y no tener negativos
+int abso(int value){
+    return value >= 0 ? value : -value;
+}
 
-
-void main()
+//Checar la direccion en base a lo D-PADS
+void dpads(int up, int down, int left, int right)
 {
-    printf("   ▄████████ ███▄▄▄▄      ▄████████    ▄█   ▄█▄    ▄████████ \n");
-    printf("  ███    ███ ███▀▀▀██▄   ███    ███   ███ ▄███▀   ███    ███ \n");
-    printf("  ███    █▀  ███   ███   ███    ███   ███▐██▀     ███    █▀  \n");
-    printf("  ███        ███   ███   ███    ███  ▄█████▀     ▄███▄▄▄     \n");
-    printf("▀███████████ ███   ███ ▀███████████ ▀▀█████▄    ▀▀███▀▀▀     \n");
-    printf("         ███ ███   ███   ███    ███   ███▐██▄     ███    █▄  \n");
-    printf("   ▄█    ███ ███   ███   ███    ███   ███ ▀███▄   ███    ███ \n");
-    printf(" ▄████████▀   ▀█   █▀    ███    █▀    ███   ▀█▀   ██████████ \n");
-    printf("                                      ▀                      \n");
-    printf("\n Instrucciones: \n")
-    printf("1.Presiona Switch 0 para iniciar.")
-    printf("2.SNAKE es de color verde, APPLE de color rojo.")
-    printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
+    // Flag: Verificar que los valores sean 0 o 1
+    up = up ? 1 : 0;
+    down = down ? 1 : 0;
+    left = left ? 1 : 0;
+    right = right ? 1 : 0;
 
+    // Cambio de direccion solo si es valido
+    if (up && direction != 2) { // Si va hacia arriba no puede ir hacia abajo
+        direction 1;
+        if (debug_mode) printf("Direccion: UP\n");
+    }
+    else if(down && direction != 1) { // no puede ir hacia arriba
+        direction 2;
+        if (debug_mode) printf("Direccion: DOWN");
+    }else if (left && direction != 4) {
+        direction 3;
+        if (debug_mode) printf("Direccion: LEFT");
+    }else if (right && direction!= 3) {
+        direction 4;
+        if (debug_mode) printf("Direccion: RIGHT";)
+    }
+}
+
+void appleGen()
+{
+    printf("Generando manzana...\n");
     
-    // Inicializar la matriz para que todos los LED's esten apagados
-    for (int y = 0; y < led_matrix_height; y++) {
-        for (int x = 0; x < led_matrix_width; x++) {
-            led_state[y][x] = 0x000000;
+    int x, y;
+    int attempts = 0;
+    int valid_position = 0;
+    
+    while (!valid_position && attempts < 100) {
+        attempts++;
+        
+        // generar numeros aleatorios
+        x = (rand() % ((WIDTH - 4) / 2)) * 2;
+        y = (rand() % ((HEIGHT - 4) / 2)) * 2;
+        
+        // ajustamos para que quede dentro de los bordes
+        if (x < 2) x = 2;
+        if (y < 2) y = 2;
+        if (x > WIDTH - 4) x = WIDTH - 4;
+        if (y > HEIGHT - 4) y = HEIGHT - 4;
+        
+        // Verificar que no esté en el cuerpo de la serpiente
+        valid_position = 1;
+        for (int i = 0; i < snake_length; i++) {
+            // la distancia entre ambos
+            int dist_x = abso(x - snakex[i]);
+            int dist_y = abso(y - snakey[i]);
+            
+            // Si la distancia es menor a 2,chocan
+            if (dist_x < 2 && dist_y < 2) {
+                valid_position = 0;
+                break;
+            }
         }
     }
-
-    clearMatrix();
-
-
     
+    // Si no es valida, ponerla en una posicion fija.
+    if (!valid_position) {
+        // La posicion contraria a la de la serpiente 
+        if (head_x < WIDTH / 2) {
+            x = WIDTH - 4;
+        } else {
+            x = 4;
+        }
+        
+        if (head_y < HEIGHT / 2) {
+            y = HEIGHT - 4;
+        } else {
+            y = 4;
+        }
+    }
+    
+    // Guardar la posición de la manzana
+    apple_x = x;
+    apple_y = y;
+    
+    // Establecer la nueva manzana
+    apple = baseLed + (matrix_wid * y) + x;
+    printf("Manzana: (%d, %d)\n", x, y);
 }
+
+
+
+
