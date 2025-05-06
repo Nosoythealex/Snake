@@ -105,6 +105,85 @@ void main()
 
     clearMatrix();
 
+    while (1) {
+        // Espera a que se active el Switch 0 para iniciar
+        printf("Esperando a que presiones Switch 0...\n");
+        while (!(*switch0)) {
+            // Solo espera
+        }
+        printf("¡Switch 0 activado! Iniciando juego...\n");
+        
+        // Reiniciar variables del juego
+        score = 1;
+        snake_length = 1;
+        head_x = WIDTH / 2;
+        head_y = HEIGHT - 2;
+        direction = 1; // Comenzar moviéndose hacia arriba
+        ingame = 1;
+        
+        // Inicializar juego
+        clearMatrix();
+        snake();
+        appleGen();
+        updateMatrix(); // Asegurar que se muestre la serpiente y la manzana inicial
+        
+        printf("¡Juego iniciado! Controla con los D-Pads\n");
+        printf("Serpiente: VERDE | Manzana: ROJA\n");
+        
+        // Bucle principal del juego
+        while (ingame) {
+            // Verificar entradas de los D-Pads para cambiar dirección
+            // Hacemos esto varias veces para una respuesta más rápida
+            for (int i = 0; i < 5; i++) {
+                dpads(*dpadUp, *dpadDo, *dpadLe, *dpadRi);
+                
+                // Pequeña pausa entre lecturas
+                for (volatile int j = 0; j < speed / 15; j++) {
+                    // Solo espera
+                }
+            }
+            
+            // Mover la serpiente en la dirección actual
+            moverSnake();
+            
+            // Verificar si comió una manzana
+            if (delApple()) {
+                comerApple();
+                appleGen(); // Generar nueva manzana inmediatamente
+            }
+            
+            // Verificar colisiones
+            if (choque()) {
+                ingame = 0;
+                continue;
+            }
+            
+            // Actualizar la visualización
+            updateMatrix();
+            
+            // Información del juego (reducida para menos spam en consola)
+            if (debug_mode) {
+                printf("Cabeza: (%d, %d) | Puntuación: %d | Longitud: %d\n", 
+                      head_x, head_y, score, snake_length);
+            }
+            
+            // Pausa más corta para controlar la velocidad
+            // La lectura frecuente de D-Pads ya creó algo de retraso
+            for (volatile int i = 0; i < speed / 2; i++) {
+                // Solo espera
+            }
+        }
+        
+        printf("\n¡¡¡ GAME OVER !!!\n");
+        printf("Puntuación final: %d\n", score);
+        printf("Presiona Switch 0 para reiniciar\n\n");
+        
+        // Esperar a que se desactive el Switch 0
+        while (*switch0) {
+            // Solo espera
+        }
+    }
+
 
     
 }
