@@ -68,6 +68,8 @@ void snake();
 void appleGen();
 void dpads(int up, int down, int left, int right);
 void abso(int value);
+void comerApple();
+int choque();
 
 void main()
 {
