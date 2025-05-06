@@ -242,6 +242,51 @@ void appleGen()
     printf("Manzana: (%d, %d)\n", x, y);
 }
 
+// Funcion para que la serpiente pueda comer(eliminar la manzana)
+void comerApple()
+{
+    printf("¡Manzana comida! Puntuación: %d → %d\n", score, score + 1);
+    
+    // Aumentar la puntuación y la longitud
+    score++;
+    
+    // Añadir un nuevo segmento al final de la serpiente
+    // El nuevo segmento heredará la posición del último segmento
+    int last_idx = snake_length - 1;
+    int new_idx = snake_length;
+    
+    snakex[new_idx] = snakex[last_idx];
+    snakey[new_idx] = snakey[last_idx];
+    
+    // Crecer el largo de la serpiente
+    snake_length++;
+    
+    printf("Snake Lenght: %d\n", snake_length);
+}
+
+// Checar que no choque la serpiente con su cuerpo
+int choque()
+{
+    // Verificar con la matrix de leds
+    if (head_x < 0 || head_x >= WIDTH || 
+        head_y < 0 || head_y >= HEIGHT) {
+        printf("¡Chocaste contra el borde! Game Over\n");
+        return 1;
+    }
+    
+    // Verificar que cuando se choque con la misma (a partir del tercer 2x2)
+    for (int i = 3; i < snake_length; i++) {
+        if (head_x == snakex[i] && head_y == snakey[i]) {
+            printf("¡Chocaste contigo mismo! Game Over\n");
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+
+
 
 
 
