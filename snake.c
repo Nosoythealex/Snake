@@ -15,8 +15,8 @@
 #include <stdlib.h> //rand()
 
 // Definimos las medidas exactas de nuestro pantalla
-#define WIDTH 34 // BOARD_WIDTH - 1 para el indice base 0
-#define HEIGHT 24 // BOARD_HEIGHT -1
+#define WIDTH 34 // BOARD WIDTH - 1 para el indice base 0
+#define HEIGHT 24 // BOARD HEIGHT -1
 
 #define matrix_wid 35 // Ancho exacto establecido en Ripes
 #define matrix_hei 25 // Alto exacto establecido en Ripes
