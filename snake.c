@@ -70,6 +70,10 @@ void dpads(int up, int down, int left, int right);
 void abso(int value);
 void comerApple();
 int choque();
+void updateMatrix();
+int delApple();
+void moverSnake();
+
 
 void main()
 {
@@ -287,8 +291,152 @@ int choque()
     return 0;
 }
 
+// Mover la serpiente con ayuda de los DPADS
+void moverSnake(){
+    // guardamos la posicion anterior para el movimiento suave
+    int old_x[100], old_y[100];
+    for (int i = 0; i < snake_length; i++) {
+        old_x[i] = snakex[i];
+        old_y[i] = snakey[i];
+    }
+    
+    // Movimiento del cuerpo a la posicion
+    for (int i = snake_length - 1; i > 0; i--) {
+        snakex[i] = old_x[i-1];
+        snakey[i] = old_y[i-1];
+    }
+    
+    // Mover la cabeza en la dirección actual
+    // Movimiento en bloques de 2x2
+    switch (direction) {
+        case 1: // Arriba
+            head_y -= 2; 
+            break;
+        case 2: // Abajo
+            head_y += 2; 
+            break;
+        case 3: // Izquierda
+            head_x -= 2; 
+            break;
+        case 4: // Derecha
+            head_x += 2;
+            break;
+    }
+    
+    // Actualizar la posición de la cabeza en el array original
+    snakex[0] = head_x;
+    snakey[0] = head_y;
+    
+    // Actualizar el puntero de la cabeza
+    snakeHead = baseLed + (matrix_wid * head_y) + head_x;
 
+}
 
+int delApple()
+{
+    // Ajustar coordenadas para bloques 2x2
+    int snake_head_x = (head_x / 2) * 2;
+    int snake_head_y = (head_y / 2) * 2;
+    int apple_block_x = (apple_x / 2) * 2;
+    int apple_block_y = (apple_y / 2) * 2;
+    
+    // Calculamos la distancia entre los bloques
+    int distancia_x = abso(snake_head_x - apple_block_x);
+    int distancia_y = abso(snake_head_y - apple_block_y);
+    // Si las distancias en X y Y son ambas menores o iguales a 1, se come la manzana
+    if (distancia_x <= 1 && distancia_y <= 1) {
+        printf("Manzana comida: (%d,%d)!\n", apple_x, apple_y); //SOLO PARA CHECAR QUE SE LA COMA
+        return 1;
+    }
+    // Para cuando se acerce a menos de un led
+    if (abso(head_x - apple_x) <= 1 && abso(head_y - apple_y) <= 1) {
+        printf("Manzana comida cerca de: (%d,%d)!\n", apple_x, apple_y);
+        return 1;
+    }
+    
+    return 0;
+}
+
+// Actualizar la Matriz y que se vea el movimiento
+void updateMatrix()
+{
+    // Creamos una matrix temporal donde guardaremos los cambios
+    unsigned int new_led_state[matrix_hei][matrix_wid];
+    
+    // Inicializar la matriz temporal con todos los LEDs apagados
+    for (int y = 0; y < matrix_hei; y++) {
+        for (int x = 0; x < matrix_wid; x++) {
+            new_led_state[y][x] = 0x000000; // Color negro (apagado)
+        }
+    }
+    
+    // Dibujar la serpiente en la matriz temporal
+    for (int i = 0; i < snake_length; i++) {
+        // Para cada segmento, dibujamos un bloque 2x2
+        int x = snakex[i];
+        int y = snakey[i];
+        
+        // Deben de ser numeros pares
+        x = (x / 2) * 2;
+        y = (y / 2) * 2;
+        
+        // Verificar que las coordenadas estén dentro de los límites
+        if (x >= 0 && x < matrix_wid - 1 && y >= 0 && y < matrix_hei - 1) {
+            if (i == 0) {
+                // La cabeza es de color verde mas suave
+                new_led_state[y][x] = COLOR_SNAKE_HEAD;
+                new_led_state[y][x+1] = COLOR_SNAKE_HEAD;
+                new_led_state[y+1][x] = COLOR_SNAKE_HEAD;
+                new_led_state[y+1][x+1] = COLOR_SNAKE_HEAD;
+            } else {
+                // El cuerpo es de color verde mas oscuro
+                new_led_state[y][x] = COLOR_SNAKE_BODY;
+                new_led_state[y][x+1] = COLOR_SNAKE_BODY;
+                new_led_state[y+1][x] = COLOR_SNAKE_BODY;
+                new_led_state[y+1][x+1] = COLOR_SNAKE_BODY;
+            }
+        }
+    }
+    
+    // Dibujar la manzana en la matriz temporal
+    if (apple_x >= 0 && apple_x < matrix_wid - 1 && 
+        apple_y >= 0 && apple_y < matrix_hei - 1) {
+        
+        // Checar que sean numero pares
+        int x = (apple_x / 2) * 2;
+        int y = (apple_y / 2) * 2;
+        
+        if (x >= 0 && x < matrix_wid - 1 && y >= 0 && y < matrix_hei - 1) {
+            new_led_state[y][x] = COLOR_APPLE; // Rojo 
+            new_led_state[y][x+1] = COLOR_APPLE;
+            new_led_state[y+1][x] = COLOR_APPLE;
+            new_led_state[y+1][x+1] = COLOR_APPLE;
+        }
+        
+        // Actualizar el puntero de la manzana
+        apple = baseLed + (matrix_wid * y) + x;
+    }
+    
+    // Actualizar SOLO los LEDs que han cambiado en la matriz real
+    volatile unsigned int *led_ptr;
+    for (int y = 0; y < matrix_hei; y++) {
+        for (int x = 0; x < matrix_wid; x++) {
+            // Solo actualizar si el estado ha cambiado
+            if (led_state[y][x] != new_led_state[y][x]) {
+                led_ptr = baseLed + (matrix_wid * y) + x;
+                
+                // Verificar que el puntero sea valido para actualizar.
+                if (led_ptr >= baseLed && 
+                    led_ptr < baseLed + (matrix_wid * matrix_hei)) {
+                    *led_ptr = new_led_state[y][x];
+                    
+                    // Actualizar el estado actual
+                    led_state[y][x] = new_led_state[y][x];
+                }
+            }
+        }
+    }
+}
 
 
 
