@@ -90,11 +90,7 @@ void main()
     printf("1. Presiona Switch 0 para iniciar.\n");
     printf("2. SNAKE es de color verde, APPLE de color rojo.\n");
     printf("3. Para reiniciar el juego, apaga y prende el SWITCH 0.\n");
-    printf("\n Instrucciones: \n")
-    printf("1.Presiona Switch 0 para iniciar.")
-    printf("2.SNAKE es de color verde, APPLE de color rojo.")
-    printf("3.Para reiniciar el juego, apaga y prende el SWITCH 0.\n")
-
+    
     
     // Inicializar la matriz para que todos los LED's esten apagados
     for (int y = 0; y < led_matrix_height; y++) {
